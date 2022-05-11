@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import common.management.JoinException;
@@ -104,6 +105,17 @@ public class User implements Serializable {
 		}
 	}
 
+	public static void removeOnlineUser(String username, Connection conn) throws ServerException {
+		try {
+			PreparedStatement stmt = conn.prepareStatement("DELETE FROM OnlineUsers WHERE username = ?");
+			stmt.setString(1, username);
+			stmt.executeUpdate();
+		} catch (SQLException | IllegalArgumentException e) {
+			System.err.println("Error deleting record: " + e);
+			throw new ServerException("Server Exception");
+		}
+	}
+
 	public static Boolean isUserOnline(String username, Connection conn) throws ServerException {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("SELECT username FROM OnlineUsers WHERE username = ?");
@@ -122,7 +134,8 @@ public class User implements Serializable {
 
 	public static User getUser(String username, String password, Connection conn) throws ServerException {
 		try {
-			PreparedStatement stmt = conn.prepareStatement("SELECT username FROM UserInfo WHERE username = ?");
+			PreparedStatement stmt = conn.prepareStatement(
+					"SELECT username, wins, games, timeToWin, rank, password FROM UserInfo WHERE username = ?");
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 
@@ -148,6 +161,22 @@ public class User implements Serializable {
 			System.out.println("Clears online users");
 		} catch (SQLException | IllegalArgumentException e) {
 			System.err.println("Error clearing online users: " + e);
+			throw new ServerException("Server Exception");
+		}
+	}
+
+	public static ArrayList<User> getAllUsers(Connection conn) throws ServerException {
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT username, wins, games, timeToWin, rank FROM UserInfo");
+			ArrayList<User> users = new ArrayList<User>();
+
+			while (rs.next()) {
+				users.add(new User(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5)));
+			}
+			return users;
+		} catch (SQLException e) {
+			System.err.println("Error listing records: " + e);
 			throw new ServerException("Server Exception");
 		}
 	}
