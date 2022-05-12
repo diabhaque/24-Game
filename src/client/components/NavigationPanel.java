@@ -46,7 +46,9 @@ public class NavigationPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.setPanel(Panel.PROFILE);
+				if (client.getNavigationEnabled()) {
+					client.setPanel(Panel.PROFILE);
+				}
 			}
 
 		});
@@ -55,7 +57,9 @@ public class NavigationPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.setPanel(Panel.GAME);
+				if (client.getNavigationEnabled()) {
+					client.setPanel(Panel.GAME_NEW);
+				}
 			}
 
 		});
@@ -65,7 +69,7 @@ public class NavigationPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (client.getGameServer() != null) {
+				if (client.getGameServer() != null && client.getNavigationEnabled()) {
 
 					SwingWorker<ArrayList<User>, Void> worker = new SwingWorker<ArrayList<User>, Void>() {
 
@@ -79,9 +83,6 @@ public class NavigationPanel extends JPanel {
 						protected void done() {
 							try {
 								ArrayList<User> users = (ArrayList<User>) get();
-								for (User user: users) {
-									System.out.println(user.getUsername());
-								}
 								client.setAllUsers(users);
 								client.setPanel(Panel.LEADERBOARD);
 							} catch (Exception e) {
@@ -102,7 +103,7 @@ public class NavigationPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (client.getGameServer() != null) {
+				if (client.getGameServer() != null && client.getNavigationEnabled()) {
 
 					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 

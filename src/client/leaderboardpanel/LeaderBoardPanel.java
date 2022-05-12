@@ -2,6 +2,7 @@ package client.leaderboardpanel;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,7 +27,9 @@ public class LeaderBoardPanel extends JPanel {
 
 	public LeaderBoardPanel(Client client) {
 		ArrayList<User> users = client.getAllUsers();
-
+		users.sort((o1, o2) -> Integer.valueOf(o1.getWins()).compareTo(Integer.valueOf(o2.getWins())));
+		Collections.reverse(users);
+			
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.setLayout(new BorderLayout());
 
@@ -35,10 +38,12 @@ public class LeaderBoardPanel extends JPanel {
 
 		data = new ArrayList<String[]>();
 
+		int i = 1;
 		for (User user : users) {
-			String[] userData = { String.valueOf(user.getRank()), user.getUsername(), String.valueOf(user.getWins()),
+			String[] userData = { String.valueOf(i), user.getUsername(), String.valueOf(user.getWins()),
 					String.valueOf(user.getGames()), String.valueOf(user.getTimeToWin()) };
 			data.add(userData);
+			i += 1;
 		}
 
 		mainPanel = new JPanel();
@@ -49,9 +54,6 @@ public class LeaderBoardPanel extends JPanel {
 		mainPanel.add(leaderBoard.getTableHeader(), BorderLayout.NORTH);
 		mainPanel.add(leaderBoard, BorderLayout.CENTER);
 
-//		leaderBoard.setBounds(30, 40, 200, 300);
-//		JScrollPane sp = new JScrollPane(leaderBoard);
-//		this.add(sp);
 
 		this.add(mainPanel, BorderLayout.CENTER);
 	}

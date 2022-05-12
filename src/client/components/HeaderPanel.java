@@ -16,4 +16,11 @@ public class HeaderPanel extends JPanel {
 		headerLabel.setFont(new Font("Courier", Font.BOLD, 16));
 		this.add(headerLabel);
 	}
+	
+	public HeaderPanel(String header, int fontSize) {
+		this.setLayout(new BorderLayout());
+		headerLabel = new JLabel(header);
+		headerLabel.setFont(new Font("Courier", Font.BOLD, fontSize));
+		this.add(headerLabel);
+	}
 }

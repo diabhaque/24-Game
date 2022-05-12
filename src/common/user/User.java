@@ -93,6 +93,27 @@ public class User implements Serializable {
 
 	}
 
+	public static void updateUser(User user, Connection conn) throws ServerException {
+		try {
+			PreparedStatement stmt = conn
+					.prepareStatement("UPDATE UserInfo SET wins = ?, games = ?, timeToWin = ? WHERE username = ?");
+			stmt.setInt(1, user.getWins());
+			stmt.setInt(2, user.getGames());
+			stmt.setInt(3, user.getTimeToWin());
+			stmt.setString(4, user.getUsername());
+			int rows = stmt.executeUpdate();
+			if (rows > 0) {
+				System.out.println("Record of " + user.getUsername() + " updated");
+			} else {
+				System.out.println(user.getUsername() + " not found!");
+			}
+		} catch (SQLException | IllegalArgumentException e) {
+			System.err.println("Error updating record: " + e);
+			throw new ServerException("Server Exception");
+		}
+
+	}
+
 	public static void addOnlineUser(String username, Connection conn) throws ServerException {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO OnlineUsers (username) VALUES (?)");
